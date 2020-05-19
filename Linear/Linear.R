@@ -2,6 +2,8 @@
 library("IBOSS")
 library("np")
 library("mined")
+library("doParallel")
+library("foreach")
 
 ####### Case 1: X~U[0,1]*U[0,1]; Fix N; n(or k)=c(100,200,400,600,800,1000)
 Linear=function(Dtrain,Dtest,cgrad,n)
