@@ -1,4 +1,5 @@
 #output treatment
+#Case 1
 MED_Li1_beta1=matrix(0,6,500)
 MED_Li1_beta2=matrix(0,6,500)
 MED_Li1_beta3=matrix(0,6,500)
@@ -76,7 +77,7 @@ pa_Li1_mse
 
 
 
-
+#Case 2
 MED_Li2_beta1=matrix(0,6,500)
 MED_Li2_beta2=matrix(0,6,500)
 MED_Li2_beta3=matrix(0,6,500)
@@ -155,7 +156,7 @@ pa_Li2_mse
 
 
 
-
+#Case 3
 MED_Li4_beta1=matrix(0,6,500)
 MED_Li4_beta2=matrix(0,6,500)
 MED_Li4_beta3=matrix(0,6,500)
