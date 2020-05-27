@@ -202,6 +202,7 @@ mreg <- function(s,r,id.basis,y,lambda,theta,wt,method,alpha,varht)
     c(list(method=method,theta=theta[1:nq],c=c,d=d,nlambda=lambda),fit[-3],list(se.aux=se.aux))
 }
 
+
 ## Auxiliary Quantities for Standard Error Calculation
 seaux <- function(s,r,q,nlambda,fit)
 {
