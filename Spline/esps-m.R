@@ -18,6 +18,7 @@ esps = function(form, data, sam.size=NULL, r=NULL, iter.c=10, iter.p=5){
     cat("r=4 for the univariate case and r=3 for the multivariate case!", "\n")
   }
   #choose the best p
+
   
   # resp = model.extract(mf, "response")
   # p.score <- matrix(nrow=iter.p, ncol=2)
