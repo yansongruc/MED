@@ -35,6 +35,7 @@ esps = function(form, data, sam.size=NULL, r=NULL, iter.c=10, iter.p=5){
   #     sam.fit.p <-  ssa(form, data=sam.p, lambda = lambda.p, theta=theta.p, alpha=1.0)
   #     p.score[pp, p] <- sam.fit.p$score
   #   }
+  
   # }
   # p.c <- as.numeric(names(which.max(table(apply(p.score, 1, which.min)))))
   p.c=1
