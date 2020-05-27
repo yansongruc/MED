@@ -291,5 +291,6 @@ registerDoParallel(cl)
 ResultS5 = foreach(i=1:100,
                    .combine=cbind,
                    .packages=c("mined","np","MaxPro","gss","mvtnorm")) %dopar% Sspline_Main5()
+
 stopCluster(cl)
 
