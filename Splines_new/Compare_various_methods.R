@@ -98,7 +98,7 @@ p1=p+theme_bw()+theme(panel.grid.major = element_blank(),
                       panel.grid.minor = element_blank(),
                       panel.border = element_rect(colour = "black"),
                       axis.text=element_text(size=12),
-                      axis.title=element_text(size=14),
+                      axis.title = element_text(size=14),
                       legend.position = "none",
                       legend.title = element_blank(),
                       legend.key.width=unit(1,"line"),
@@ -115,15 +115,16 @@ p2<-p +theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black"),
-        plot.title = element_text(size=10, hjust = 0.5),
+        axis.text=element_text(size=12),
+        axis.title = element_text(size=14),
         legend.position = "none",
         legend.title = element_blank(),
-        legend.key.width=unit(0.5,"line"),
+        legend.key.width=unit(1,"line"),
         legend.key.height=unit(1,"line"))+
   scale_fill_gradient(low = c1, high = c2)+
   xlab(expression(x[1]))+ylab(expression(x[2]))+
   geom_raster(data = df,aes(V1,V2,fill=uniy))+
-  geom_point(data=X[unif.ind,],aes(V1,V2),col="red")
+geom_point(data=X[unif.ind,],aes(V1,V2),size=2,col="red")
 p2
 
 ###############################
@@ -133,15 +134,16 @@ p3<-p +theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black"),
-        plot.title = element_text(size=10, hjust = 0.5),
+        axis.text=element_text(size=12),
+        axis.title = element_text(size=14),
         legend.position = "none",
         legend.title = element_blank(),
-        legend.key.width=unit(0.5,"line"),
+        legend.key.width=unit(1,"line"),
         legend.key.height=unit(1,"line"))+
   scale_fill_gradient(low = c1, high = c2)+
   xlab(expression(x[1]))+ylab(expression(x[2]))+
   geom_raster(data = df,aes(V1,V2,fill=absy))+
-  geom_point(data=X[abs.ind,],aes(V1,V2),col="red")
+  geom_point(data=X[abs.ind,],aes(V1,V2),size=2,col="red")
 p3
 
 ###############################
@@ -151,15 +153,16 @@ p4<-p +theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black"),
-        plot.title = element_text(size=10, hjust = 0.5),
+        axis.text=element_text(size=12),
+        axis.title = element_text(size=14),
         legend.position = "none",
         legend.title = element_blank(),
-        legend.key.width=unit(0.5,"line"),
+        legend.key.width=unit(1,"line"),
         legend.key.height=unit(1,"line"))+
   scale_fill_gradient(low = c1, high = c2)+
   xlab(expression(x[1]))+ylab(expression(x[2]))+
   geom_raster(data = df,aes(V1,V2,fill=sbsy))+
-  geom_point(data=X[lhd2.ind,],aes(V1,V2),col="red")
+  geom_point(data=X[lhd2.ind,],aes(V1,V2),size=2,col="red")
 p4
 
 ###############################
@@ -169,14 +172,15 @@ p5<-p +theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black"),
-        plot.title = element_text(size=10, hjust = 0.5),
+        axis.text=element_text(size=12),
+        axis.title = element_text(size=14),
         legend.position = "right",
         legend.title = element_blank(),
-        legend.key.width=unit(0.5,"line"),
-        legend.key.height=unit(1,"line"))+
+        legend.key.width=unit(1,"line"),
+        legend.key.height=unit(2,"line"))+
   scale_fill_gradient(low = c1, high = c2)+
   xlab(expression(x[1]))+ylab(expression(x[2]))+
   geom_raster(data = df,aes(V1,V2,fill=medy))+
-  geom_point(data=X[med.ind,],aes(V1,V2),col="red")
+  geom_point(data=X[med.ind,],aes(V1,V2),size=2,col="red")
 p5
 
