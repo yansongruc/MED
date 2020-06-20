@@ -53,7 +53,7 @@ PAO=function(daTa,test,n,lambda.pro,theta,seed)
   res[1,1]=log(mean((test$y-MEDyhat)^2))
   
   MEDfit=ssa(y~loc.x1*loc.x2, data=daTa[,-4], id.basis=MEDi,
-             lambda = lambda.pro, theta=theta)
+             lambda = lambda.pro, theta=theta,alpha=1.0)
   MEDyhats=predict(MEDfit,newdata=test[,-3], se.fit=F)
   res[1,2]=log(mean((test$y-MEDyhats)^2))
   
@@ -73,7 +73,7 @@ PAO=function(daTa,test,n,lambda.pro,theta,seed)
   res[2,1]=log(mean((test$y-SBSyhat)^2))
   
   SBSfit=ssa(y~loc.x1*loc.x2, data=daTa[,-4], id.basis=SBSi,
-             lambda = lambda.pro, theta=theta)
+             lambda = lambda.pro, theta=theta,alpha=1.0)
   SBSyhats=predict(SBSfit,newdata=test[,-3], se.fit=F)
   res[2,2]=log(mean((test$y-SBSyhats)^2))
   
@@ -90,7 +90,7 @@ PAO=function(daTa,test,n,lambda.pro,theta,seed)
   res[3,1]=log(mean((test$y-ABSyhat)^2))
   
   ABSfit=ssa(y~loc.x1*loc.x2, data=daTa[,-4], id.basis=ABSi,
-             lambda = lambda.pro, theta=theta)
+             lambda = lambda.pro, theta=theta,alpha=1.0)
   ABSyhats=predict(ABSfit,newdata=test[,-3], se.fit=F)
   res[3,2]=log(mean((test$y-ABSyhats)^2))
   
@@ -107,7 +107,7 @@ PAO=function(daTa,test,n,lambda.pro,theta,seed)
   res[4,1]=log(mean((test$y-UNIyhat)^2))
   
   UNIfit=ssa(y~loc.x1*loc.x2, data=daTa[,-4], id.basis=UNIi,
-             lambda = lambda.pro, theta=theta)
+             lambda = lambda.pro, theta=theta,alpha=1.0)
   UNIyhats=predict(UNIfit,newdata=test[,-3], se.fit=F)
   res[4,2]=log(mean((test$y-UNIyhats)^2))
   
