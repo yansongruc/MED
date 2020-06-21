@@ -141,3 +141,74 @@ ResultO= foreach(i=1:200,
                   .combine=cbind,
                   .packages=c("geoR","mined","gss","nabor","randtoolbox")) %dopar% PAO_main(nseq,666*i+888)
 stopCluster(cl)
+
+MED_ok_pa=matrix(0,4,200)
+SBS_ok_pa=matrix(0,4,200)
+ABS_ok_pa=matrix(0,4,200)
+UNI_ok_pa=matrix(0,4,200)
+MED_os_pa=matrix(0,4,200)
+SBS_os_pa=matrix(0,4,200)
+ABS_os_pa=matrix(0,4,200)
+UNI_os_pa=matrix(0,4,200)
+for(i in 1:4){
+  for(j in 1:200){
+    MED_ok_pa[i,j]=ResultO[i,j][[1]][1,1]
+    SBS_ok_pa[i,j]=ResultO[i,j][[1]][2,1]
+    ABS_ok_pa[i,j]=ResultO[i,j][[1]][3,1]
+    UNI_ok_pa[i,j]=ResultO[i,j][[1]][4,1]
+    
+    MED_os_pa[i,j]=ResultO[i,j][[1]][1,2]
+    SBS_os_pa[i,j]=ResultO[i,j][[1]][2,2]
+    ABS_os_pa[i,j]=ResultO[i,j][[1]][3,2]
+    UNI_os_pa[i,j]=ResultO[i,j][[1]][4,2]
+  }
+}
+
+data_O=data.frame(kmse=c(apply(MED_ok_pa,1,mean),apply(SBS_ok_pa,1,mean),apply(ABS_ok_pa,1,mean),apply(UNI_ok_pa,1,mean)),
+                   ksd=c(apply(MED_ok_pa,1,sd), apply(SBS_ok_pa,1,sd),apply(ABS_ok_pa,1,sd),apply(UNI_ok_pa,1,sd)),
+                  smse=c(apply(MED_os_pa,1,mean),apply(SBS_os_pa,1,mean),apply(ABS_os_pa,1,mean),apply(UNI_os_pa,1,mean)),
+                   ssd=c(apply(MED_os_pa,1,sd), apply(SBS_os_pa,1,sd),apply(ABS_os_pa,1,sd),apply(UNI_os_pa,1,sd)),
+                   Method=factor(rep(c("GBMED","SBS","ABS","UNIF"),each=4)),
+                   k=rep(c(71,141,212,283),times=4))
+
+pd=position_dodge(10)
+#brewer.pal(8,'Set1')
+p_oK=ggplot(data_O,aes(x=k,y=kmse,group=Method,colour=Method))+
+  theme_light()+theme(panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(),
+                      panel.border = element_rect(colour = "black"),
+                      axis.text=element_text(size=12),
+                      axis.title=element_text(size=14),
+                      legend.position = "right",
+                      legend.title = element_blank(),
+                      legend.key.width=unit(2,"line"),
+                      legend.key.height=unit(1,"line"))+
+  geom_errorbar(aes(ymin=kmse-ksd, ymax=kmse+ksd), width=1, position=pd) +
+  geom_line(aes(linetype=Method), position=pd)+
+  geom_point(position=pd,size=1)+scale_shape_manual(values=c(1,1,1,1))+
+  scale_linetype_manual(values=c(3,1,2,4))+
+  scale_size_manual(values=c(1,1,1,1))+
+  scale_color_manual(values=c("#4DAF4A","#E41A1C","#377EB8","#984EA3"))+
+  xlab("k")+ylab("log(MSE)")
+p_oK
+
+
+p_oS=ggplot(data_O,aes(x=k,y=smse,group=Method,colour=Method))+
+  theme_light()+theme(panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(),
+                      panel.border = element_rect(colour = "black"),
+                      axis.text=element_text(size=12),
+                      axis.title=element_text(size=14),
+                      legend.position = "right",
+                      legend.title = element_blank(),
+                      legend.key.width=unit(2,"line"),
+                      legend.key.height=unit(1,"line"))+
+  geom_errorbar(aes(ymin=smse-ssd, ymax=smse+ssd), width=1, position=pd) +
+  geom_line(aes(linetype=Method), position=pd)+
+  geom_point(position=pd,size=1)+scale_shape_manual(values=c(1,1,1,1))+
+  scale_linetype_manual(values=c(3,1,2,4))+
+  scale_size_manual(values=c(1,1,1,1))+
+  scale_color_manual(values=c("#4DAF4A","#E41A1C","#377EB8","#984EA3"))+
+  xlab("k")+ylab("log(MSE)")
+p_oS
+
