@@ -1,7 +1,6 @@
 library("geoR")
 library("MaxPro")
 library("mined")
-library("MASS")
 library("fields")
 library("np")
 library("doParallel")
@@ -25,7 +24,7 @@ nseq=round(c(10,30,50,70,100)*1000^(2/9))
 #46 139 232 325 464
 
 ##########    Universal Kriging Model    ##########
-PEN_nonug=function(daTa,test,n)
+PEN_nonug=function(daTa,test,n,seed)
 {
   res=matrix(0,4,5)     
   findi=function(x){idex=which(daTa$loc.x1==x[1] & daTa$loc.x2==x[2])}
@@ -42,9 +41,10 @@ PEN_nonug=function(daTa,test,n)
                      krige=krige.control(trend.d ="1st",trend.l = "1st",beta = MEDGPres$beta,
                                          cov.pars = MEDGPres$cov.pars))
   MEDyhat=MEDpred$predict
-  res[1,5]=sqrt(mean((test$y-MEDyhat)^2))
+  res[1,5]=log(mean((test$y-MEDyhat)^2))
   
   # MaxPro
+  set.seed(seed)
   iexist=sample(1:nrow(daTa),1)
   exist=daTa[iexist,1:2]
   MAPloc=MaxProAugment(exist,daTa[,1:2],nNew=n-1)$Design
@@ -56,9 +56,10 @@ PEN_nonug=function(daTa,test,n)
                      krige=krige.control(trend.d = "1st",trend.l = "1st",beta = MAPGPres$beta,
                                          cov.pars = MAPGPres$cov.pars))
   MAPyhat=MAPpred$predict
-  res[2,5]=sqrt(mean((test$y-MAPyhat)^2))
+  res[2,5]=log(mean((test$y-MAPyhat)^2))
   
   #ABS
+  set.seed(seed)
   ABSi=ABS_select(daTa$y,n)
   ABS=daTa[ABSi,1:3]
   ABSGPres=likfit(as.geodata(ABS),trend = "1st",ini.cov.pars = c(1e6,10),fix.nugget = TRUE,
@@ -68,9 +69,10 @@ PEN_nonug=function(daTa,test,n)
                      krige=krige.control(trend.d = "1st",trend.l = "1st",beta = ABSGPres$beta,
                                          cov.pars = ABSGPres$cov.pars))
   ABSyhat=ABSpred$predict
-  res[3,5]=sqrt(mean((test$y-ABSyhat)^2))
+  res[3,5]=log(mean((test$y-ABSyhat)^2))
   
   #Uniform
+  set.seed(seed)
   UNIi=sample(1:nrow(daTa),n)
   UNI=daTa[UNIi,1:3]
   UNIGPres=likfit(as.geodata(UNI),trend = "1st",ini.cov.pars = c(1e6,10),fix.nugget = TRUE,
@@ -80,14 +82,14 @@ PEN_nonug=function(daTa,test,n)
                      krige=krige.control(trend.d = "1st",trend.l = "1st",beta = UNIGPres$beta,
                                          cov.pars = UNIGPres$cov.pars))
   UNIyhat=UNIpred$predict
-  res[4,5]=sqrt(mean((test$y-UNIyhat)^2))
+  res[4,5]=log(mean((test$y-UNIyhat)^2))
   
   return(res)
 }
 
 
 ##########    Smoothing Splines Model    ##########
-PEN_splines=function(daTa,test,n)
+PEN_splines=function(daTa,test,n,lambda.pro,theta,seed)
 {
   res=rep(0,4)    
   findi=function(x){idex=which(daTa$loc.x1==x[1] & daTa$loc.x2==x[2])}
@@ -99,9 +101,10 @@ PEN_splines=function(daTa,test,n)
   MEDfit=ssa(y~.+.^2, data=daTa[,-4], id.basis=MEDi,
               lambda = lambda.pro, theta=theta)
   MEDyhat=predict(MEDfit,newdata=test[,-3], se.fit=F)
-  res[1]=sqrt(mean((test$y-MEDyhat)^2))
+  res[1]=log(mean((test$y-MEDyhat)^2))
   
   # MaxPro
+  set.seed(seed)
   iexist=sample(1:nrow(daTa),1)
   exist=daTa[iexist,1:2]
   MAPloc=MaxProAugment(exist,daTa[,1:2],nNew=n-1)$Design
@@ -109,28 +112,31 @@ PEN_splines=function(daTa,test,n)
   MAPfit=ssa(y~.+.^2, data=daTa[,-4], id.basis=MAPi,
              lambda = lambda.pro, theta=theta)
   MAPyhat=predict(MAPfit,newdata=test[,-3], se.fit=F)
-  res[2]=sqrt(mean((test$y-MAPyhat)^2))
+  res[2]=log(mean((test$y-MAPyhat)^2))
   
   #ABS
+  set.seed(seed)
   ABSi=ABS_select(daTa$y,n)
   ABSfit=ssa(y~.+.^2, data=daTa[,-4], id.basis=ABSi,
              lambda = lambda.pro, theta=theta)
   ABSyhat=predict(ABSfit,newdata=test[,-3], se.fit=F)
-  res[3]=sqrt(mean((test$y-ABSyhat)^2))
+  res[3]=log(mean((test$y-ABSyhat)^2))
   
   #Uniform
+  set.seed(seed)
   UNIi=sample(1:nrow(daTa),n)
   UNIfit=ssa(y~.+.^2, data=daTa[,-4], id.basis=UNIi,
              lambda = lambda.pro, theta=theta)
   UNIyhat=predict(UNIfit,newdata=test[,-3], se.fit=F)
-  res[4]=sqrt(mean((test$y-UNIyhat)^2))
+  res[4]=log(mean((test$y-UNIyhat)^2))
   
   return(res)
 }
 
 
-PEN_main=function(nseq)
+PEN_main=function(nseq,seed)
 {
+  set.seed(seed)
   it=sample(1:1720,1000)
   Dtrain=Data[it,]
   Dtest=Data[-it,-4]
@@ -141,20 +147,14 @@ PEN_main=function(nseq)
   predres=krige.conv(as.geodata(Dtrain[,-4]),locations =Dtest[,-3],
                      krige=krige.control(trend.d = "1st",trend.l = "1st",beta = MLEres$beta,
                                          cov.pars = MLEres$cov.pars))
-  pred=sqrt(sum((predres$predict-Dtest[,3])^2)/nrow(Dtest))
+  pred=log(sum((predres$predict-Dtest[,3])^2)/nrow(Dtest))
   MlE=c(MLEpara,pred)
   
-  ### Smoothing splines full data
-  fit=ssa(y~.+.^2, data=Dtrain[,-4], id.basis=1:1000,
-             lambda = lambda.pro, theta=theta)
-  smoothpred=predict(fit,newdata=Dtest[,-3], se.fit=F)
-  smooth=sqrt(mean((Dtest$y-smoothpred)^2))
-  
   ### Universal kriging subsamples
-  PEN1=function(n){return(PEN_nonug(Dtrain,Dtest,n))}
+  PEN1=function(n){return(PEN_nonug(Dtrain,Dtest,n,seed))}
   krigout=sapply(nseq,PEN1,simplify = FALSE)
   
-  ### Smoothing spline subsamples
+  ### Smoothing splines full data
   sam.size=ceiling(50*(1000^{1/4}))
   esps.re=esps(y~.+.^2, data=Dtrain[,-4], sam.size,r=3)
   r=3
@@ -163,18 +163,24 @@ PEN_main=function(nseq)
   lambda.pro=log10(1000*pro.gcv.lamb)
   theta=esps.re$theta
   
-  PEN2=function(n){return(PEN_splines(Dtrain,Dtest,n))}
+  fit=ssa(y~.+.^2, data=Dtrain[,-4], id.basis=1:1000,
+          lambda = lambda.pro, theta=theta)
+  smoothpred=predict(fit,newdata=Dtest[,-3], se.fit=F)
+  smooth=log(mean((Dtest$y-smoothpred)^2))
+  
+  ### Smoothing spline subsamples
+  PEN2=function(n){return(PEN_splines(Dtrain,Dtest,n,lambda.pro,theta,seed))}
   splineout=sapply(nseq,PEN2)
   
   res=list(Kriging=MlE,Splines=smooth,SubKriging=krigout,Subspline=splineout)
   return(res)
 }
 
-cl<- makeCluster(8) 
+cl<- makeCluster(4) 
 registerDoParallel(cl) 
 ResultNS= foreach(i=1:200,
                  .combine=cbind,
-                 .packages=c("geoR","mined","np","gss","fields","MaxPro")) %dopar% PEN_main(nseq)
+                 .packages=c("geoR","mined","gss","MaxPro")) %dopar% PEN_main(nseq,666*i+888)
 stopCluster(cl)
 
 MED_k_pa=matrix(0,5,200)
@@ -230,13 +236,26 @@ p_K=ggplot(data_NS,aes(x=k,y=kmse,group=Method,colour=Method))+
   scale_linetype_manual(values=c(3,5,1,2,4))+
   scale_size_manual(values=c(1,1,1,1,1))+
   scale_color_manual(values=c("#4DAF4A","#A65628","#E41A1C","#377EB8","#984EA3"))+
-  xlab("k")+ylab("MSE")
+  xlab("k")+ylab("log(MSE)")
 p_K
 
 
-
-
-
-
-
+p_S=ggplot(data_NS,aes(x=k,y=smse,group=Method,colour=Method))+
+  theme_light()+theme(panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(),
+                      panel.border = element_rect(colour = "black"),
+                      axis.text=element_text(size=12),
+                      axis.title=element_text(size=14),
+                      legend.position = "right",
+                      legend.title = element_blank(),
+                      legend.key.width=unit(2,"line"),
+                      legend.key.height=unit(1,"line"))+
+  geom_errorbar(aes(ymin=smse-ssd, ymax=smse+ssd), width=1, position=pd) +
+  geom_line(aes(linetype=Method), position=pd)+
+  geom_point(position=pd,size=1)+scale_shape_manual(values=c(1,1,1,1))+
+  scale_linetype_manual(values=c(3,5,1,2,4))+
+  scale_size_manual(values=c(1,1,1,1,1))+
+  scale_color_manual(values=c("#4DAF4A","#A65628","#E41A1C","#377EB8","#984EA3"))+
+  xlab("k")+ylab("log(MSE)")
+p_S
 
