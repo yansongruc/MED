@@ -1,5 +1,9 @@
 library(mvtnorm)
 library(MASS)
+library(np)
+library(mined)
+library(MaxPro)
+library(nabor)
 library(randtoolbox)
 library(gss)
 library(foreach)
@@ -7,10 +11,7 @@ library(doParallel)
 library(ggplot2)
 #source("ssa.R")
 #source("esps-m.R")
-<<<<<<< HEAD
-=======
 #source("ABS_select.R")
->>>>>>> f7fcb26... Splines
 #source("MED_select.R")
 
 ################################################################################
@@ -23,11 +24,7 @@ set.seed(100)
 nloop=100
 NN=2^(seq(12,16,1))
 ntest=5000
-<<<<<<< HEAD
-SNR=5          # SNR=5 or 2
-=======
 SNR=2          # SNR=5 or 2
->>>>>>> f7fcb26... Splines
 sub1_meta=round(10*NN^(1/9))
 #sub1_meta=c(25,27,29,32,34)
 sub2_meta=round(5*NN^(2/9))
@@ -165,23 +162,6 @@ for(jj in 1:length(NN)){
   
 }
 
-<<<<<<< HEAD
-UNIF1c1=log(UNIF1_meta)
-UNIF2c1=log(UNIF2_meta)
-ABS1c1=log(ABS1_meta)
-ABS2c1=log(ABS2_meta)
-SBS1c1=log(SBS1_meta)
-SBS2c1=log(SBS2_meta)
-MED1c1=log(MED1_meta)
-MED2c1=log(MED2_meta)
-
-mse.matc1<-data.frame(mse=c(apply(UNIF1c1,2,mean), apply(UNIF2c1,2,mean), apply(ABS1c1,2,mean), 
-                           apply(ABS2c1,2,mean), apply(SBS1c1,2,mean), apply(SBS2c1,2,mean),
-                           apply(MED1c1,2,mean),apply(MED2c1,2,mean)),
-                     sd=c(apply(UNIF1c1,2,sd), apply(UNIF2c1,2,sd), apply(ABS1c1,2,sd), 
-                          apply(ABS2c1,2,sd), apply(SBS1c1,2,sd), apply(SBS2c1,2,sd),
-                          apply(MED1c1,2,sd),apply(MED2c1,2,sd)),
-=======
 UNIF1c2=log(UNIF1_meta)
 UNIF2c2=log(UNIF2_meta)
 ABS1c2=log(ABS1_meta)
@@ -197,16 +177,11 @@ mse.matc2<-data.frame(mse=c(apply(UNIF1c2,2,mean), apply(UNIF2c2,2,mean), apply(
                      sd=c(apply(UNIF1c2,2,sd), apply(UNIF2c2,2,sd), apply(ABS1c2,2,sd), 
                           apply(ABS2c2,2,sd), apply(SBS1c2,2,sd), apply(SBS2c2,2,sd),
                           apply(MED1c2,2,sd),apply(MED2c2,2,sd)),
->>>>>>> f7fcb26... Splines
                      Method=factor(rep(c("UNIF1","UNIF2","ABS1","ABS2","SBS1","SBS2","GBMED1","GBMED2"), each=length(NN))),
                      n=rep(log(NN),8))
 
 pd <- position_dodge(0.2)
-<<<<<<< HEAD
-p1 = ggplot(mse.matc1,aes(x=n,y=mse,group=Method,colour=Method))
-=======
 p1 = ggplot(mse.matc2,aes(x=n,y=mse,group=Method,colour=Method))
->>>>>>> f7fcb26... Splines
 p23 = p1+theme_light()+theme(panel.grid.major = element_blank(),
                              panel.grid.minor = element_blank(),
                              panel.border = element_rect(colour = "black"),
